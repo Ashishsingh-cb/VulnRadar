@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ cve["cve_id"] }} - VulnRadar
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background: #111827;
+
+            color: white;
+
+            margin: 0;
+
+            padding: 30px;
+        }
+
+
+        .container {
+
+            max-width: 1100px;
+
+            margin: auto;
+        }
+
+
+        /* HEADER */
+
+        .header {
+
+            margin-bottom: 30px;
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 34px;
+        }
+
+
+        .subtitle {
+
+            color: #9ca3af;
+
+            margin-top: 8px;
+        }
+
+
+        /* BACK BUTTON */
+
+        .back-button {
+
+            display: inline-block;
+
+            margin-bottom: 25px;
+
+            padding: 10px 18px;
+
+            background: #1f2937;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            border: 1px solid #374151;
+        }
+
+
+        .back-button:hover {
+
+            background: #374151;
+        }
+
+
+        /* MAIN CARD */
+
+        .card {
+
+            background: #1f2937;
+
+            border: 1px solid #374151;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .card h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* INFORMATION GRID */
+
+        .info-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+        }
+
+
+        .info-box {
+
+            background: #18212f;
+
+            padding: 18px;
+
+            border-radius: 8px;
+        }
+
+
+        .info-label {
+
+            color: #9ca3af;
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .info-value {
+
+            font-size: 20px;
+
+            font-weight: bold;
+        }
+
+
+        /* DESCRIPTION */
+
+        .description {
+
+            line-height: 1.7;
+
+            color: #d1d5db;
+        }
+
+
+        /* PRIORITY */
+
+        .critical {
+
+            color: #ef4444;
+        }
+
+
+        .high {
+
+            color: #f97316;
+        }
+
+
+        .medium {
+
+            color: #eab308;
+        }
+
+
+        .low {
+
+            color: #22c55e;
+        }
+
+
+        /* KEV */
+
+        .kev-yes {
+
+            color: #ef4444;
+
+            font-weight: bold;
+        }
+
+
+        .kev-no {
+
+            color: #9ca3af;
+        }
+
+
+        /* RESPONSIVE */
+
+        @media (max-width: 800px) {
+
+            .info-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            🛡️ {{ cve["cve_id"] }}
+        </h1>
+
+        <div class="subtitle">
+
+            Vulnerability Intelligence Details
+
+        </div>
+
+    </div>
+
+
+    <!-- BACK -->
+
+    <a
+        href="/"
+        class="back-button"
+    >
+
+        ← Back to Dashboard
+
+    </a>
+
+
+    <!-- RISK SUMMARY -->
+
+    <div class="card">
+
+        <h2>
+            🚨 Risk Assessment
+        </h2>
+
+
+        <div class="info-grid">
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Risk Score
+                </div>
+
+                <div class="info-value">
+                    {{ cve["risk_score"] }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Priority
+                </div>
+
+                <div
+                    class="info-value
+                    {{ cve['priority']|lower }}"
+                >
+
+                    {{ cve["priority"] }}
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    CISA KEV
+                </div>
+
+                <div class="info-value">
+
+                    {% if cve["is_kev"] %}
+
+                        <span class="kev-yes">
+                            🚨 YES
+                        </span>
+
+                    {% else %}
+
+                        <span class="kev-no">
+                            NO
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- CVE INFORMATION -->
+
+    <div class="card">
+
+        <h2>
+            Vulnerability Information
+        </h2>
+
+
+        <div class="info-grid">
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    CVSS Score
+                </div>
+
+                <div class="info-value">
+
+                    {{ cve["cvss_score"] }}
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Severity
+                </div>
+
+                <div class="info-value">
+
+                    {{ cve["severity"] }}
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    CWE
+                </div>
+
+                <div class="info-value">
+
+                    {{ cve["cwe"] or "N/A" }}
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Published
+                </div>
+
+                <div class="info-value">
+
+                    {{ cve["published"] or "N/A" }}
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Last Modified
+                </div>
+
+                <div class="info-value">
+
+                    {{ cve["last_modified"] or "N/A" }}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    <div class="card">
+
+        <h2>
+            📄 Description
+        </h2>
+
+        <div class="description">
+
+            {{ cve["description"] or
+               "No description available." }}
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

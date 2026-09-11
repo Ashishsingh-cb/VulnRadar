@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        VulnRadar - Security Intelligence
+    </title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            padding: 30px;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            background: #111827;
+
+            color: white;
+        }
+
+
+        .container {
+
+            max-width: 1450px;
+
+            margin: auto;
+        }
+
+
+        /* =================================================
+           HEADER
+        ================================================= */
+
+        .header {
+
+            margin-bottom: 30px;
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 36px;
+        }
+
+
+        .header p {
+
+            color: #9ca3af;
+
+            margin-top: 8px;
+        }
+
+
+        /* =================================================
+           STATISTICS
+        ================================================= */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .stats-small {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .stat-card {
+
+            background: #1f2937;
+
+            border: 1px solid #374151;
+
+            border-radius: 12px;
+
+            padding: 20px;
+        }
+
+
+        .stat-title {
+
+            color: #9ca3af;
+
+            font-size: 14px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .stat-value {
+
+            font-size: 30px;
+
+            font-weight: bold;
+        }
+
+
+        /* =================================================
+           CHARTS
+        ================================================= */
+
+        .charts {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .chart-card {
+
+            background: #1f2937;
+
+            border: 1px solid #374151;
+
+            border-radius: 12px;
+
+            padding: 20px;
+        }
+
+
+        .chart-card h2 {
+
+            margin-top: 0;
+
+            font-size: 18px;
+        }
+
+
+        .chart-card canvas {
+
+            max-height: 280px;
+        }
+
+
+        /* =================================================
+           FILTERS
+        ================================================= */
+
+        .filter-card {
+
+            background: #1f2937;
+
+            border: 1px solid #374151;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .filter-form {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+        }
+
+
+        input,
+        select,
+        button {
+
+            padding: 11px 14px;
+
+            border-radius: 7px;
+
+            border: 1px solid #374151;
+
+            background: #111827;
+
+            color: white;
+        }
+
+
+        input {
+
+            min-width: 250px;
+        }
+
+
+        button {
+
+            cursor: pointer;
+
+            background: #2563eb;
+
+            border: none;
+        }
+
+
+        button:hover {
+
+            background: #1d4ed8;
+        }
+
+
+        /* =================================================
+           SECTION TITLE
+        ================================================= */
+
+        .section-title {
+
+            margin-top: 35px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .section-title h2 {
+
+            margin: 0;
+
+            font-size: 24px;
+        }
+
+
+        .section-title p {
+
+            color: #9ca3af;
+
+            margin-top: 5px;
+        }
+
+
+        /* =================================================
+           TABLE
+        ================================================= */
+
+        .table-card {
+
+            background: #1f2937;
+
+            border: 1px solid #374151;
+
+            border-radius: 12px;
+
+            overflow-x: auto;
+
+            margin-bottom: 30px;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        th,
+        td {
+
+            padding: 14px;
+
+            text-align: left;
+
+            border-bottom:
+                1px solid #374151;
+        }
+
+
+        th {
+
+            color: #9ca3af;
+
+            font-size: 12px;
+
+            text-transform: uppercase;
+        }
+
+
+        tr:hover {
+
+            background: #18212f;
+        }
+
+
+        /* =================================================
+           LINKS
+        ================================================= */
+
+        .cve-link {
+
+            color: #60a5fa;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+
+        .cve-link:hover {
+
+            text-decoration: underline;
+        }
+
+
+        .news-link {
+
+            color: #60a5fa;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+
+        .news-link:hover {
+
+            text-decoration: underline;
+        }
+
+
+        /* =================================================
+           BADGES
+        ================================================= */
+
+        .badge {
+
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+        }
+
+
+        .critical {
+
+            background: #7f1d1d;
+
+            color: #fecaca;
+        }
+
+
+        .high {
+
+            background: #7c2d12;
+
+            color: #fed7aa;
+        }
+
+
+        .medium {
+
+            background: #713f12;
+
+            color: #fef08a;
+        }
+
+
+        .low {
+
+            background: #14532d;
+
+            color: #bbf7d0;
+        }
+
+
+        .kev {
+
+            color: #f87171;
+
+            font-weight: bold;
+        }
+
+
+        .not-kev {
+
+            color: #9ca3af;
+        }
+
+
+        .source {
+
+            color: #9ca3af;
+
+            font-size: 13px;
+        }
+
+
+        .no-data {
+
+            text-align: center;
+
+            color: #9ca3af;
+
+            padding: 30px;
+        }
+
+
+        /* =================================================
+           ALERT ROW
+        ================================================= */
+
+        .alert-row {
+
+            background: rgba(127, 29, 29, 0.12);
+        }
+
+
+        .alert-row:hover {
+
+            background: rgba(127, 29, 29, 0.20);
+        }
+
+
+        /* =================================================
+           RESPONSIVE
+        ================================================= */
+
+        @media (max-width: 1000px) {
+
+            .charts {
+
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 900px) {
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .stats-small {
+
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .stats {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            body {
+
+                padding: 15px;
+            }
+
+
+            input {
+
+                min-width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =================================================
+         HEADER
+    ================================================= -->
+
+    <div class="header">
+
+        <h1>
+            🛡️ VulnRadar
+        </h1>
+
+        <p>
+            Security Vulnerability Intelligence Dashboard
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         STATISTICS
+    ================================================= -->
+
+    <div class="stats">
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Total CVEs
+            </div>
+
+            <div class="stat-value">
+                {{ total_cves }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Critical CVEs
+            </div>
+
+            <div class="stat-value">
+                {{ critical_cves }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                High CVEs
+            </div>
+
+            <div class="stat-value">
+                {{ high_cves }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                CISA KEV
+            </div>
+
+            <div class="stat-value">
+                {{ kev_cves }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="stats-small">
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Security News
+            </div>
+
+            <div class="stat-value">
+                {{ total_news }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Average CVSS
+            </div>
+
+            <div class="stat-value">
+                {{ average_cvss }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Highest Risk Score
+            </div>
+
+            <div class="stat-value">
+                {{ highest_risk }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         CHARTS
+    ================================================= -->
+
+    <div class="charts">
+
+
+        <div class="chart-card">
+
+            <h2>
+                CVE Severity Distribution
+            </h2>
+
+            <canvas id="severityChart"></canvas>
+
+        </div>
+
+
+        <div class="chart-card">
+
+            <h2>
+                CISA KEV Status
+            </h2>
+
+            <canvas id="kevChart"></canvas>
+
+        </div>
+
+
+        <div class="chart-card">
+
+            <h2>
+                Risk Distribution
+            </h2>
+
+            <canvas id="riskChart"></canvas>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         FILTERS
+    ================================================= -->
+
+    <div class="filter-card">
+
+        <form
+            method="GET"
+            action="/"
+            class="filter-form"
+        >
+
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search CVE..."
+                value="{{ search }}"
+            >
+
+
+            <select name="severity">
+
+                <option value="">
+                    All Severities
+                </option>
+
+
+                <option
+                    value="CRITICAL"
+                    {% if severity == "CRITICAL" %}
+                    selected
+                    {% endif %}
+                >
+
+                    Critical
+
+                </option>
+
+
+                <option
+                    value="HIGH"
+                    {% if severity == "HIGH" %}
+                    selected
+                    {% endif %}
+                >
+
+                    High
+
+                </option>
+
+
+                <option
+                    value="MEDIUM"
+                    {% if severity == "MEDIUM" %}
+                    selected
+                    {% endif %}
+                >
+
+                    Medium
+
+                </option>
+
+
+                <option
+                    value="LOW"
+                    {% if severity == "LOW" %}
+                    selected
+                    {% endif %}
+                >
+
+                    Low
+
+                </option>
+
+            </select>
+
+
+            <select name="kev">
+
+                <option value="">
+                    All KEV
+                </option>
+
+
+                <option
+                    value="yes"
+                    {% if kev == "yes" %}
+                    selected
+                    {% endif %}
+                >
+
+                    KEV Only
+
+                </option>
+
+
+                <option
+                    value="no"
+                    {% if kev == "no" %}
+                    selected
+                    {% endif %}
+                >
+
+                    Non-KEV
+
+                </option>
+
+            </select>
+
+
+            <button type="submit">
+                Search
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+    <!-- =================================================
+         SECURITY ALERTS
+    ================================================= -->
+
+    <div class="section-title">
+
+        <h2>
+            🚨 Security Alerts
+        </h2>
+
+        <p>
+            Highest-priority vulnerabilities requiring attention.
+        </p>
+
+    </div>
+
+
+    <div class="table-card">
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        CVE
+                    </th>
+
+                    <th>
+                        CVSS
+                    </th>
+
+                    <th>
+                        Severity
+                    </th>
+
+                    <th>
+                        KEV
+                    </th>
+
+                    <th>
+                        Risk Score
+                    </th>
+
+                    <th>
+                        Priority
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for alert in alerts %}
+
+
+                <tr class="alert-row">
+
+
+                    <td>
+
+                        <a
+                            href="/cve/{{ alert['cve_id'] }}"
+                            class="cve-link"
+                        >
+
+                            {{ alert["cve_id"] }}
+
+                        </a>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ alert["cvss_score"] }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if alert["severity"] %}
+
+                            <span
+                                class="badge {{ alert['severity']|lower }}"
+                            >
+
+                                {{ alert["severity"] }}
+
+                            </span>
+
+                        {% else %}
+
+                            N/A
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if alert["is_kev"] %}
+
+                            <span class="kev">
+                                🚨 YES
+                            </span>
+
+                        {% else %}
+
+                            <span class="not-kev">
+                                NO
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            {{ alert["risk_score"] }}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        {% if alert["priority"] %}
+
+                            <span
+                                class="badge {{ alert['priority']|lower }}"
+                            >
+
+                                {{ alert["priority"] }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                </tr>
+
+
+            {% else %}
+
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="no-data"
+                    >
+
+                        🎉 No high-priority security alerts.
+
+                    </td>
+
+                </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- =================================================
+         HIGHEST RISK CVEs
+    ================================================= -->
+
+    <div class="section-title">
+
+        <h2>
+            🔥 Highest Risk Vulnerabilities
+        </h2>
+
+        <p>
+            Vulnerabilities ranked by VulnRadar risk score.
+        </p>
+
+    </div>
+
+
+    <div class="table-card">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        CVE
+                    </th>
+
+                    <th>
+                        CVSS
+                    </th>
+
+                    <th>
+                        Severity
+                    </th>
+
+                    <th>
+                        KEV
+                    </th>
+
+                    <th>
+                        Risk
+                    </th>
+
+                    <th>
+                        Priority
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for cve in top_cves %}
+
+
+                <tr>
+
+
+                    <td>
+
+                        <a
+                            class="cve-link"
+                            href="/cve/{{ cve['cve_id'] }}"
+                        >
+
+                            {{ cve["cve_id"] }}
+
+                        </a>
+
+                    </td>
+
+
+                    <td>
+                        {{ cve["cvss_score"] }}
+                    </td>
+
+
+                    <td>
+
+                        {% if cve["severity"] %}
+
+                            <span
+                                class="badge {{ cve['severity']|lower }}"
+                            >
+
+                                {{ cve["severity"] }}
+
+                            </span>
+
+                        {% else %}
+
+                            N/A
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if cve["is_kev"] %}
+
+                            <span class="kev">
+                                🚨 YES
+                            </span>
+
+                        {% else %}
+
+                            <span class="not-kev">
+                                NO
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ cve["risk_score"] }}
+                    </td>
+
+
+                    <td>
+
+                        {% if cve["priority"] %}
+
+                            <span
+                                class="badge {{ cve['priority']|lower }}"
+                            >
+
+                                {{ cve["priority"] }}
+
+                            </span>
+
+                        {% else %}
+
+                            N/A
+
+                        {% endif %}
+
+                    </td>
+
+
+                </tr>
+
+
+            {% else %}
+
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="no-data"
+                    >
+
+                        No vulnerabilities found.
+
+                    </td>
+
+                </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- =================================================
+         SECURITY NEWS
+    ================================================= -->
+
+    <div class="section-title">
+
+        <h2>
+            📰 Security News Intelligence
+        </h2>
+
+        <p>
+            Security news correlated with VulnRadar vulnerability data.
+        </p>
+
+    </div>
+
+
+    <div class="table-card">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        News
+                    </th>
+
+                    <th>
+                        Source
+                    </th>
+
+                    <th>
+                        Related CVEs
+                    </th>
+
+                    <th>
+                        KEV
+                    </th>
+
+                    <th>
+                        Risk
+                    </th>
+
+                    <th>
+                        Priority
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for article in news_articles %}
+
+
+                <tr>
+
+
+                    <td>
+
+                        <a
+                            href="{{ article['url'] }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="news-link"
+                        >
+
+                            {{ article["title"] }}
+
+                        </a>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="source">
+
+                            {{ article["source"] or "Unknown" }}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        {% if article["related_cves"] %}
+
+
+                            {% for cve_id in article["related_cves"].split(",") %}
+
+
+                                <a
+                                    href="/cve/{{ cve_id }}"
+                                    class="cve-link"
+                                >
+
+                                    {{ cve_id }}
+
+                                </a>
+
+
+                                {% if not loop.last %}
+                                    ,
+                                {% endif %}
+
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+
+                            <span class="not-kev">
+
+                                No CVE linked
+
+                            </span>
+
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if article["has_kev"] %}
+
+                            <span class="kev">
+                                🚨 YES
+                            </span>
+
+                        {% else %}
+
+                            <span class="not-kev">
+                                NO
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if article["highest_risk"] is not none %}
+
+                            {{ article["highest_risk"] }}
+
+                        {% else %}
+
+                            -
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if article["highest_priority"] %}
+
+                            <span
+                                class="badge {{ article['highest_priority']|lower }}"
+                            >
+
+                                {{ article["highest_priority"] }}
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="not-kev">
+
+                                No CVE
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                </tr>
+
+
+            {% else %}
+
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="no-data"
+                    >
+
+                        No security news available.
+
+                    </td>
+
+                </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     CHART JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+    // =====================================================
+    // SEVERITY CHART
+    // =====================================================
+
+    new Chart(
+
+        document.getElementById(
+            "severityChart"
+        ),
+
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: [
+
+                    "Critical",
+                    "High",
+                    "Medium",
+                    "Low"
+
+                ],
+
+                datasets: [
+
+                    {
+
+                        label: "CVEs",
+
+                        data: [
+
+                            {{ severity_counts["CRITICAL"] }},
+
+                            {{ severity_counts["HIGH"] }},
+
+                            {{ severity_counts["MEDIUM"] }},
+
+                            {{ severity_counts["LOW"] }}
+
+                        ]
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+    // =====================================================
+    // KEV CHART
+    // =====================================================
+
+    new Chart(
+
+        document.getElementById(
+            "kevChart"
+        ),
+
+        {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+
+                    "Known Exploited",
+                    "Not Known Exploited"
+
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+
+                            {{ kev_yes }},
+
+                            {{ kev_no }}
+
+                        ]
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true
+
+            }
+
+        }
+
+    );
+
+
+    // =====================================================
+    // RISK CHART
+    // =====================================================
+
+    new Chart(
+
+        document.getElementById(
+            "riskChart"
+        ),
+
+        {
+
+            type: "pie",
+
+            data: {
+
+                labels: [
+
+                    "Critical",
+                    "High",
+                    "Medium",
+                    "Low"
+
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+
+                            {{ risk_counts["CRITICAL"] }},
+
+                            {{ risk_counts["HIGH"] }},
+
+                            {{ risk_counts["MEDIUM"] }},
+
+                            {{ risk_counts["LOW"] }}
+
+                        ]
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true
+
+            }
+
+        }
+
+    );
+
+</script>
+
+
+</body>
+
+</html>
