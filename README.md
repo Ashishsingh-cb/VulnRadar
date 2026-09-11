@@ -178,6 +178,11 @@ Docker deployment
 
 Ashish Singh
 Cybersecurity Student
+
+## 📸 Screenshots
+
+### VulnRadar Dashboard
+
 <img width="1894" height="952" alt="image" src="https://github.com/user-attachments/assets/5dc75fb2-1fa7-4722-9996-ae52829b9e10" />
 <img width="1633" height="806" alt="image" src="https://github.com/user-attachments/assets/be93be0e-9912-404e-808e-7f750a1de114" />
 
